@@ -7,15 +7,20 @@ namespace SG
     public class AnimatorHandler : MonoBehaviour
     {
         public Animator animator;
+        public InputHandler inputHandler;
+        public PlayerLocomotion locomotion;
         int vertical;
         int horizontal;
         public bool canRotate;
 
         public void Initialize()
         {
+            inputHandler = GetComponentInParent<InputHandler>();
             animator = GetComponent<Animator>();
+            locomotion = GetComponentInParent<PlayerLocomotion>();
             vertical = Animator.StringToHash("Vertical");
             horizontal = Animator.StringToHash("Horizontal");
+            
         }
 
         public void UpdateAnimatorValues(float verticalMovement, float horizontalMovement)
@@ -73,6 +78,12 @@ namespace SG
             animator.SetFloat(vertical, v, 0.1f, Time.deltaTime);
             animator.SetFloat(horizontal, h, 0.1f, Time.deltaTime);
         }
+        public void PlayTargetAnimation(string targetAnim,bool isInteracting)
+        {
+            animator.applyRootMotion = isInteracting;
+            animator.SetBool("isInteracting", isInteracting);
+            animator.CrossFade(targetAnim, 0.2f);
+        }
 
         public void CanRotate()
         {
@@ -82,6 +93,19 @@ namespace SG
         public void StopRotation()
         {
             canRotate = false;
+        }
+        private void OnAnimatorMove()
+        {
+            if(inputHandler.isInteracting == false)
+            {
+                return;
+            }
+            float delta = Time.deltaTime;
+            locomotion.rigidbody.drag = 0;
+            Vector3 deltaPosition = animator.deltaPosition;
+            deltaPosition.y = 0;
+            Vector3 velocity = deltaPosition / delta;
+            locomotion.rigidbody.velocity = velocity;
         }
     }
 }

@@ -103,6 +103,33 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Player Act"",
+            ""id"": ""d056eceb-1455-4d0f-9aec-27f4bf184d07"",
+            ""actions"": [
+                {
+                    ""name"": ""Roll"",
+                    ""type"": ""Button"",
+                    ""id"": ""c487e6be-17ae-40bf-9cc8-62b16b32fa08"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""13d52d19-84a9-493c-8115-2f5a8bfae9db"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Roll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -111,6 +138,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
         m_Player_Camera = m_Player.FindAction("Camera", throwIfNotFound: true);
+        // Player Act
+        m_PlayerAct = asset.FindActionMap("Player Act", throwIfNotFound: true);
+        m_PlayerAct_Roll = m_PlayerAct.FindAction("Roll", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -197,9 +227,46 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         }
     }
     public PlayerActions @Player => new PlayerActions(this);
+
+    // Player Act
+    private readonly InputActionMap m_PlayerAct;
+    private IPlayerActActions m_PlayerActActionsCallbackInterface;
+    private readonly InputAction m_PlayerAct_Roll;
+    public struct PlayerActActions
+    {
+        private @PlayerControls m_Wrapper;
+        public PlayerActActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Roll => m_Wrapper.m_PlayerAct_Roll;
+        public InputActionMap Get() { return m_Wrapper.m_PlayerAct; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(PlayerActActions set) { return set.Get(); }
+        public void SetCallbacks(IPlayerActActions instance)
+        {
+            if (m_Wrapper.m_PlayerActActionsCallbackInterface != null)
+            {
+                @Roll.started -= m_Wrapper.m_PlayerActActionsCallbackInterface.OnRoll;
+                @Roll.performed -= m_Wrapper.m_PlayerActActionsCallbackInterface.OnRoll;
+                @Roll.canceled -= m_Wrapper.m_PlayerActActionsCallbackInterface.OnRoll;
+            }
+            m_Wrapper.m_PlayerActActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Roll.started += instance.OnRoll;
+                @Roll.performed += instance.OnRoll;
+                @Roll.canceled += instance.OnRoll;
+            }
+        }
+    }
+    public PlayerActActions @PlayerAct => new PlayerActActions(this);
     public interface IPlayerActions
     {
         void OnMovement(InputAction.CallbackContext context);
         void OnCamera(InputAction.CallbackContext context);
+    }
+    public interface IPlayerActActions
+    {
+        void OnRoll(InputAction.CallbackContext context);
     }
 }

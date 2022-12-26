@@ -519,6 +519,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
+  inputHandler: {fileID: 0}
+  locomotion: {fileID: 0}
   canRotate: 1
 --- !u!95 &514103935
 Animator:
@@ -796,6 +798,7 @@ GameObject:
   - component: {fileID: 1114807049}
   - component: {fileID: 1114807053}
   - component: {fileID: 1114807052}
+  - component: {fileID: 1114807054}
   m_Layer: 10
   m_Name: TPP
   m_TagString: Untagged
@@ -883,6 +886,21 @@ MonoBehaviour:
   moveAmount: 0
   mouseX: 0
   mouseY: 0
+  b_input: 0
+  rollFlag: 0
+  isInteracting: 0
+--- !u!114 &1114807054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114807048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0d544213ea6d7f4e9acecc5b3f1d984, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1215005226
 GameObject:
   m_ObjectHideFlags: 0
